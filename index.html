@@ -3,55 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Boraho Cyber Cafe - MCQ Portal</title>
+    <title>Boraho Cyber Cafe - Premium MCQ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .card-gradient-indigo { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
+        .card-gradient-orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        
+        .glass-effect {
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen font-sans text-slate-900">
+<body class="bg-[#F8FAFC] min-h-screen text-slate-900">
 
-    <nav class="bg-indigo-700 text-white p-4 sticky top-0 z-50 shadow-md">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <h1 class="font-bold text-lg truncate pr-2">Boraho Cyber Cafe</h1>
-            <div class="flex items-center gap-2">
-                <div id="timer-display" class="hidden bg-red-500 px-3 py-1 rounded-full font-mono text-xs font-bold animate-pulse shadow-sm">
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
+        <div class="max-w-xl mx-auto px-5 py-4 flex justify-between items-center">
+            <div>
+                <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-[0.2em] mb-0.5">Welcome to</p>
+                <h1 class="font-extrabold text-xl text-slate-900 tracking-tight">Boraho Cyber Cafe</h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="timer-display" class="hidden bg-rose-50 text-rose-600 px-3 py-1.5 rounded-xl font-bold text-xs border border-rose-100 animate-pulse">
                     30:00
                 </div>
-                <button id="home-btn" onclick="location.reload()" class="hidden bg-indigo-800 p-2 rounded-lg transition active:scale-90">
+                <button id="home-btn" onclick="location.reload()" class="hidden w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600">
                     <i class="fas fa-home"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-xl mx-auto p-4 sm:p-6">
+    <main class="max-w-xl mx-auto p-5">
         
-        <div id="subject-view" class="animate-in fade-in duration-500">
-            <h2 class="text-slate-500 font-bold text-xs uppercase tracking-widest mb-4 px-1">Available Exams</h2>
-            <div id="subject-list" class="grid grid-cols-1 gap-3"></div>
+        <div id="subject-view" class="space-y-8 animate-in fade-in duration-700">
+            
+            <section>
+                <h2 class="font-extrabold text-lg text-slate-800 mb-4 px-1">Live Exams</h2>
+                <div id="subject-list" class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2 text-center py-10 text-slate-400 text-sm italic">Loading exams...</div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="font-extrabold text-lg text-slate-800 mb-4 px-1">Study Materials</h2>
+                <div id="notes-list" class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2 text-center py-10 text-slate-300 text-sm italic">Fetching materials...</div>
+                </div>
+            </section>
+
         </div>
 
-        <div id="quiz-view" class="hidden animate-in slide-in-from-bottom duration-500">
-            <div class="mb-6">
-                <h2 id="quiz-title" class="text-2xl font-black text-slate-800 leading-tight"></h2>
-                <p class="text-slate-400 text-sm">Please select one answer for each question.</p>
+        <div id="quiz-view" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
+                <h2 id="quiz-title" class="text-2xl font-extrabold text-slate-900 mb-2"></h2>
+                <div class="flex items-center gap-2 text-slate-400 text-xs font-medium uppercase tracking-wider">
+                    <i class="far fa-clock"></i>
+                    <span>30 Mins</span>
+                    <span>•</span>
+                    <span>Multiple Choice</span>
+                </div>
             </div>
             
             <div id="questions-container" class="space-y-4"></div>
 
-            <div class="mt-8 pb-10">
-                <button onclick="calculateResult()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-bold shadow-lg shadow-indigo-200 active:scale-[0.98] transition-all text-lg">
+            <div class="pt-4 pb-12">
+                <button onclick="calculateResult()" class="w-full bg-indigo-600 text-white py-5 rounded-[1.5rem] font-bold shadow-xl shadow-indigo-100 active:scale-95 transition-all">
                     Submit Final Answers
                 </button>
             </div>
         </div>
 
-        <div id="result-view" class="hidden animate-in zoom-in duration-300">
-            </div>
+        <div id="result-view" class="hidden"></div>
     </main>
 
     <script>
@@ -66,37 +99,54 @@
         let userAnswers = {};
 
         async function init() {
+            // Fetch Exams
             const { data: subjects } = await supabaseClient.from('subjects').select('*');
             const list = document.getElementById('subject-list');
-            
             if (subjects) {
                 list.innerHTML = subjects.map(sub => `
-                    <div onclick="startQuiz(${sub.id}, '${sub.name}')" class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4 transition-all active:bg-slate-50 active:scale-[0.97] cursor-pointer">
-                        <div class="bg-indigo-50 w-12 h-12 rounded-xl flex items-center justify-center text-indigo-600">
-                            <i class="${sub.icon || 'fas fa-file-alt'} text-xl"></i>
+                    <div onclick="startQuiz(${sub.id}, '${sub.name}')" class="glass-effect p-5 rounded-[2rem] flex flex-col items-center gap-4 active:scale-95 transition-all cursor-pointer">
+                        <div class="card-gradient-indigo w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                            <i class="${sub.icon || 'fas fa-book-open'} text-2xl"></i>
                         </div>
-                        <div class="flex-1">
-                            <div class="font-bold text-slate-800">${sub.name}</div>
-                            <div class="text-slate-400 text-xs font-medium">Standard 30-min Exam</div>
+                        <div class="text-center">
+                            <div class="font-bold text-slate-800 text-sm mb-1">${sub.name}</div>
+                            <div class="text-[9px] font-black text-indigo-500 uppercase tracking-tighter">Enter Test</div>
                         </div>
-                        <i class="fas fa-chevron-right text-slate-300 text-xs"></i>
                     </div>
                 `).join('');
+            }
+
+            // Fetch Notes (using your ID, Title, File_URL logic)
+            const { data: subject_notes } = await supabaseClient.from('subject_notes').select('id, title, file_url');
+            const notesList = document.getElementById('notes-list');
+            if (subject_notes && subject_notes.length > 0) {
+                notesList.innerHTML = subject_notes.map(note => `
+                    <a href="${note.file_url}" target="_blank" class="glass-effect p-5 rounded-[2rem] flex flex-col items-center gap-4 active:scale-95 transition-all border-b-4 border-orange-500/10">
+                        <div class="card-gradient-orange w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                            <i class="fas fa-file-pdf text-2xl"></i>
+                        </div>
+                        <div class="text-center">
+                            <div class="font-bold text-slate-800 text-sm mb-1 line-clamp-1">${note.title}</div>
+                            <div class="text-[9px] font-black text-orange-600 uppercase tracking-tighter">Download PDF</div>
+                        </div>
+                    </a>
+                `).join('');
+            } else {
+                notesList.innerHTML = `<div class="col-span-2 text-center text-slate-300 text-xs py-10">No materials available.</div>`;
             }
         }
 
         async function startQuiz(id, name) {
             currentSubjectId = id;
-            window.scrollTo(0,0);
+            window.scrollTo({top: 0, behavior: 'smooth'});
             document.getElementById('subject-view').classList.add('hidden');
             document.getElementById('quiz-view').classList.remove('hidden');
             document.getElementById('home-btn').classList.remove('hidden');
             document.getElementById('timer-display').classList.remove('hidden');
             document.getElementById('quiz-title').innerText = name;
-
+            
             const { data } = await supabaseClient.from('mcq_questions').select('*').eq('subject_id', id);
             currentQuestions = data;
-
             renderQuestions();
             startTimer();
         }
@@ -104,16 +154,14 @@
         function renderQuestions() {
             const container = document.getElementById('questions-container');
             container.innerHTML = currentQuestions.map((q, i) => `
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="text-[10px] bg-slate-100 text-slate-500 font-black px-2 py-0.5 rounded-full uppercase">Q. ${i+1}</span>
-                    </div>
-                    <p class="text-lg font-bold text-slate-800 mb-5 leading-snug">${q.question_text}</p>
-                    <div class="space-y-2">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-50 shadow-sm">
+                    <div class="text-[10px] font-extrabold text-indigo-500 mb-3 uppercase tracking-widest">Question ${i+1}</div>
+                    <p class="text-lg font-bold text-slate-800 mb-6 leading-tight">${q.question_text}</p>
+                    <div class="space-y-3">
                         ${['a','b','c','d'].map(opt => `
-                            <label class="flex items-center p-4 border border-slate-100 bg-slate-50 rounded-xl cursor-pointer active:bg-indigo-50 active:border-indigo-200 transition-all">
+                            <label class="flex items-center p-4 rounded-2xl border border-slate-100 bg-slate-50/50 cursor-pointer active:bg-indigo-50 transition-colors group">
                                 <input type="radio" name="q${q.id}" value="${opt.toUpperCase()}" class="w-5 h-5 accent-indigo-600">
-                                <span class="ml-4 font-semibold text-slate-700">${q['option_'+opt]}</span>
+                                <span class="ml-4 font-semibold text-slate-700 group-hover:text-indigo-600">${q['option_'+opt]}</span>
                             </label>
                         `).join('')}
                     </div>
@@ -127,10 +175,8 @@
                 let mins = Math.floor(timeLeft / 60);
                 let secs = timeLeft % 60;
                 document.getElementById('timer-display').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    alert("Time expired. Auto-submitting...");
                     calculateResult();
                 }
             }, 1000);
@@ -139,114 +185,13 @@
         async function calculateResult() {
             clearInterval(timerInterval);
             let score = 0;
-            let incorrect = 0;
-            let skipped = 0;
-
             currentQuestions.forEach(q => {
                 const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
-                const val = selected ? selected.value : null;
-                userAnswers[q.id] = val;
-
-                if (!val) {
-                    skipped++;
-                } else if (val === q.correct_option) {
-                    score++;
-                } else {
-                    incorrect++;
-                }
+                if (selected && selected.value === q.correct_option) score++;
             });
-
-            const studentName = prompt("Scoreboard Name:") || "Guest";
-
-            await supabaseClient.from('test_results').insert([
-                { student_name: studentName, subject_id: currentSubjectId, score: score, total: currentQuestions.length }
-            ]);
-
-            showResult(score, currentQuestions.length, incorrect, skipped);
-        }
-
-        async function showResult(score, total, incorrect, skipped) {
-            window.scrollTo(0,0);
-            document.getElementById('quiz-view').classList.add('hidden');
-            document.getElementById('timer-display').classList.add('hidden');
-            const resultView = document.getElementById('result-view');
-            resultView.classList.remove('hidden');
-            
-            const percentage = Math.round((score / total) * 100);
-
-            resultView.innerHTML = `
-                <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
-                    <div class="text-5xl mb-2 text-center">🏆</div>
-                    <h2 class="text-xl font-bold text-slate-800 text-center">Exam Results</h2>
-                    <div class="text-6xl font-black text-indigo-600 my-2 tracking-tighter text-center">${score}/${total}</div>
-                    <p class="text-center text-slate-500 font-bold mb-6">${percentage}% Accuracy Rate</p>
-
-                    <div class="grid grid-cols-3 gap-2 mb-8">
-                        <div class="bg-green-50 p-3 rounded-2xl text-center border border-green-100">
-                            <div class="text-green-600 font-bold text-lg">${score}</div>
-                            <div class="text-[10px] uppercase text-green-700 font-black">Correct</div>
-                        </div>
-                        <div class="bg-red-50 p-3 rounded-2xl text-center border border-red-100">
-                            <div class="text-red-600 font-bold text-lg">${incorrect}</div>
-                            <div class="text-[10px] uppercase text-red-700 font-black">Wrong</div>
-                        </div>
-                        <div class="bg-slate-100 p-3 rounded-2xl text-center border border-slate-200">
-                            <div class="text-slate-600 font-bold text-lg">${skipped}</div>
-                            <div class="text-[10px] uppercase text-slate-500 font-black">Skipped</div>
-                        </div>
-                    </div>
-
-                    <div class="text-left mb-6">
-                        <h3 class="font-bold text-slate-800 mb-4 text-xs uppercase tracking-widest flex items-center gap-2">
-                            <i class="fas fa-list-check text-indigo-500"></i> Detailed Review
-                        </h3>
-                        <div class="space-y-3 max-h-80 overflow-y-auto pr-2 hide-scrollbar border-b border-slate-50 pb-4">
-                            ${currentQuestions.map((q, i) => {
-                                const userAns = userAnswers[q.id];
-                                const isCorrect = userAns === q.correct_option;
-                                return `
-                                    <div class="p-3 rounded-xl border ${isCorrect ? 'border-green-100 bg-green-50' : 'border-red-100 bg-red-50'}">
-                                        <p class="text-[13px] font-bold text-slate-700 mb-2 leading-tight">${i+1}. ${q.question_text}</p>
-                                        <div class="flex justify-between items-center text-[11px]">
-                                            <div class="${isCorrect ? 'text-green-600' : 'text-red-600'} font-bold">
-                                                Your Answer: ${userAns || 'None'}
-                                            </div>
-                                            <div class="text-indigo-700 font-black bg-white px-2 py-0.5 rounded shadow-sm">
-                                                Correct: ${q.correct_option}
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 rounded-2xl p-4">
-                        <h3 class="font-bold text-slate-800 mb-4 text-left flex items-center gap-2 text-sm uppercase">
-                            <i class="fas fa-medal text-yellow-500"></i> Top Performers
-                        </h3>
-                        <div id="leaderboard" class="space-y-2 text-left"></div>
-                    </div>
-                    
-                    <button onclick="location.reload()" class="w-full mt-6 bg-slate-900 text-white py-4 rounded-2xl font-bold active:scale-95 transition">
-                        Restart Portal
-                    </button>
-                </div>
-            `;
-
-            // Load leaderboard
-            const { data } = await supabaseClient.from('test_results')
-                .select('*')
-                .eq('subject_id', currentSubjectId)
-                .order('score', { ascending: false })
-                .limit(5);
-
-            document.getElementById('leaderboard').innerHTML = data.map((r, i) => `
-                <div class="flex justify-between items-center p-3 rounded-xl bg-white border border-slate-100 shadow-sm">
-                    <span class="font-bold text-slate-700 text-sm truncate pr-2">${i+1}. ${r.student_name}</span>
-                    <span class="text-indigo-600 font-black text-sm whitespace-nowrap">${r.score}/${r.total}</span>
-                </div>
-            `).join('');
+            const name = prompt("Enter your name for the leaderboard:");
+            await supabaseClient.from('test_results').insert([{ student_name: name || 'Guest', subject_id: currentSubjectId, score: score, total: currentQuestions.length }]);
+            location.reload();
         }
 
         window.onload = init;
