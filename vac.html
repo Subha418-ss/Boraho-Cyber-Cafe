@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Elite - Mock Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 15px; }
+
+        .btn-back-header {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-back-header:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .timer-box {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 15px 100px 15px;
+        }
+
+        .intro-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .option-label {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            transition: 0.2s;
+        }
+
+        .option-label:hover { border-color: var(--primary); background: rgba(255,255,255,0.08); }
+
+        input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #64748b;
+            border-radius: 50%;
+            margin-right: 15px;
+            position: relative;
+        }
+
+        input[type="radio"]:checked {
+            border-color: var(--primary);
+            background: var(--primary);
+            box-shadow: inset 0 0 0 4px var(--card-bg);
+        }
+
+        .submit-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .btn-finish {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            width: 100%;
+            max-width: 870px;
+            padding: 16px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-home {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        #result-area { display: none; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .report-card { background: #1e293b; border-radius: 15px; padding: 15px; margin-top: 15px; border-left: 5px solid transparent; }
+        .correct-report { border-left-color: var(--success); }
+        .wrong-report { border-left-color: var(--danger); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <button class="btn-back-header" onclick="goHome()" title="Back to Home">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="logo">Loc Tutorial</div>
+    </div>
+    <div class="timer-box" id="timer">30:00</div>
+</header>
+
+<div class="main-container">
+    <div id="quiz-ui">
+        <div class="intro-card">
+            <h1 style="margin:0 0 10px 0; font-size: 1.5rem;">Fitness & Wellness</h1>
+            <p style="margin:0; opacity:0.9; font-size: 0.9rem;">Complete all 20 questions before the timer runs out.</p>
+        </div>
+        <form id="quiz-form">
+            <div id="questions-wrapper"></div>
+            <div class="submit-container">
+                <button type="button" class="btn-finish" onclick="confirmSubmit()">Finish Exam</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="result-area">
+        <div class="intro-card" style="text-align: center;">
+            <h2 style="margin:0">Test Results</h2>
+            <div id="score-num" style="font-size: 3rem; font-weight: 800; margin: 20px 0;">0</div>
+            <p id="feedback-text" style="font-weight: 600;"></p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn-home" onclick="location.reload()"><i class="fas fa-rotate-right"></i> Retake</button>
+                <button class="btn-home" onclick="goHome()" style="background: white; color: black; border: none;"><i class="fas fa-house"></i> Home</button>
+            </div>
+        </div>
+        <div id="detailed-list"></div>
+    </div>
+</div>
+
+<script>
+    // --- SET YOUR HOME LINK HERE ---
+    const HOME_PAGE_URL = "index.html"; // Replace with your link
+
+    const questions = [
+        { q: "Which health determinant has an individual's maximum control?", a: "Personal Interactions", o: ["Healthcare system", "Social and cultural", "Heredity and Age", "Personal Interactions"] },
+        { q: "What is suppleness called in another words?", a: "Flexibility", o: ["Speed", "Strength", "Endurance", "Flexibility"] },
+        { q: "Which is NOT a component of 'Skill-Related Physical Fitness'?", a: "Muscular strength", o: ["Agility", "Muscular strength", "Coordination", "Reaction time"] },
+        { q: "A proper warm-up usually lasts for?", a: "5–10 minutes", o: ["2–3 minutes", "20–30 minutes", "5–10 minutes", "More than 1 hour"] },
+        { q: "Which is NOT a component of an effective warm-up?", a: "Static stretching for long duration", o: ["Static stretching for long duration", "General aerobic activity", "Dynamic stretching", "Activity-specific movements"] },
+        { q: "Wellness includes?", a: "Physical, mental, and social well-being", o: ["Only physical health", "Physical, mental, and social well-being", "Only absence of disease", "High body strength only"] },
+        { q: "Which of the following is a lifestyle disease?", a: "Diabetes (Type-2)", o: ["Tuberculosis", "Typhoid", "Malaria", "Diabetes (Type-2)"] },
+        { q: "Yoga and meditation mainly improve?", a: "Mental wellness", o: ["Muscular endurance", "Flexibility", "Mental wellness", "Body composition"] },
+        { q: "Physically fit children are more likely to have?", a: "Better concentration and memory", o: ["Better concentration and memory", "Poor academic performance", "Higher absenteeism", "Low immunity"] },
+        { q: "Ability of a muscle to exert force for a short time is?", a: "Muscular strength", o: ["Muscular endurance", "Muscular strength", "Flexibility", "Coordination"] },
+        { q: "Which component is MOST related to heart and lung efficiency?", a: "Cardiorespiratory endurance", o: ["Muscular endurance", "Body composition", "Cardiorespiratory endurance", "Speed"] },
+        { q: "Body Mass Index (BMI) is calculated using?", a: "Weight and height", o: ["Weight and height", "Height and age", "Heart rate", "Flexibility"] },
+        { q: "Major importance of physical fitness in old age?", a: "Improving mobility and independence", o: ["Increasing joint pain", "Making body stiff", "Reducing bone strength", "Improving mobility and independence"] },
+        { q: "Ratio of fat to lean body mass is called?", a: "Body composition", o: ["Muscular endurance", "Body composition", "Agility", "Strength"] },
+        { q: "The aim of health-related fitness is to prevent?", a: "Diseases", o: ["Power", "Way", "Capacity", "Diseases"] },
+        { q: "Ability to execute movements with greater amplitude?", a: "Flexibility", o: ["Strength", "Flexibility", "Body composition", "Stamina"] },
+        { q: "The ability to overcome resistance is called?", a: "Muscular strength", o: ["Muscular strength", "Muscular Endurance", "Flexibility", "Body composition"] },
+        { q: "Ruler drop test is used to measure?", a: "Reaction time", o: ["Speed", "Reaction time", "Coordination", "Flexibility"] },
+        { q: "Sit and reach test used to measure?", a: "Flexibility", o: ["Coordination", "Strength", "Flexibility", "Agility"] },
+        { q: "Shuttle run is used to measure?", a: "Agility", o: ["Flexibility", "Speed", "Acceleration", "Agility"] }
+    ];
+
+    const qWrapper = document.getElementById('questions-wrapper');
+    questions.forEach((item, i) => {
+        let optionsHTML = item.o.map(opt => `
+            <label class="option-label">
+                <input type="radio" name="q${i}" value="${opt}">
+                <span>${opt}</span>
+            </label>
+        `).join('');
+        qWrapper.innerHTML += `<div class="question-card"><span class="question-text">${i + 1}. ${item.q}</span><div class="options-grid">${optionsHTML}</div></div>`;
+    });
+
+    let seconds = 1800;
+    const timerDisplay = document.getElementById('timer');
+    const countdown = setInterval(() => {
+        let m = Math.floor(seconds / 60); let s = seconds % 60;
+        timerDisplay.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+        if (seconds <= 0) { clearInterval(countdown); showResults(); }
+        seconds--;
+    }, 1000);
+
+    function confirmSubmit() { if (confirm("Submit your answers?")) showResults(); }
+
+    function showResults() {
+        clearInterval(countdown);
+        const form = new FormData(document.getElementById('quiz-form'));
+        let score = 0; let reportHTML = '';
+        questions.forEach((item, i) => {
+            const userAns = form.get(`q${i}`); const isCorrect = userAns === item.a; if (isCorrect) score++;
+            reportHTML += `<div class="report-card ${isCorrect ? 'correct-report' : 'wrong-report'}">
+                <span class="badge ${isCorrect ? 'badge-correct' : 'badge-wrong'}">${isCorrect ? 'Correct' : 'Incorrect'}</span>
+                <div>${item.q}</div>
+                <div style="font-size:0.85rem; opacity:0.8;">Your Choice: ${userAns || 'None'} | Correct: ${item.a}</div>
+            </div>`;
+        });
+        document.getElementById('quiz-ui').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+        document.getElementById('score-num').innerText = `${score} / 20`;
+        document.getElementById('detailed-list').innerHTML = reportHTML;
+        window.scrollTo(0,0);
+    }
+
+    // UPDATED: Function to handle custom link
+    function goHome() {
+        if (document.getElementById('quiz-ui').style.display !== 'none') {
+            if (confirm("Progress will be lost. Exit to Home?")) {
+                window.location.href = HOME_PAGE_URL;
+            }
+        } else {
+            window.location.href = HOME_PAGE_URL;
+        }
+    }
+</script>
+</body>
+</html>
