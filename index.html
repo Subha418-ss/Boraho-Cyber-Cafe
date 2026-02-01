@@ -1,43 +1,32 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Boraho Cyber Cafe - Premium MCQ</title>
+    <title>Boraho Cyber Cafe - Premium MCQ Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
         .card-gradient-indigo { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
         .card-gradient-orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        
-        .glass-effect {
-            background: #ffffff;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-        }
+        .glass-effect { background: #ffffff; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
     </style>
 </head>
-<body class="bg-[#F8FAFC] min-h-screen text-slate-900">
+<body class="bg-[#F8FAFC] min-h-screen text-slate-900 overflow-x-hidden">
 
     <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
         <div class="max-w-xl mx-auto px-5 py-4 flex justify-between items-center">
             <div>
-                <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-[0.2em] mb-0.5">Welcome to</p>
+                <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-[0.2em] mb-0.5">Assessment Portal</p>
                 <h1 class="font-extrabold text-xl text-slate-900 tracking-tight">Boraho Cyber Cafe</h1>
             </div>
             <div class="flex items-center gap-3">
-                <div id="timer-display" class="hidden bg-rose-50 text-rose-600 px-3 py-1.5 rounded-xl font-bold text-xs border border-rose-100 animate-pulse">
-                    30:00
-                </div>
-                <button id="home-btn" onclick="location.reload()" class="hidden w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600">
+                <div id="timer-display" class="hidden bg-rose-50 text-rose-600 px-3 py-1.5 rounded-xl font-bold text-xs border border-rose-100 animate-pulse">30:00</div>
+                <button id="home-btn" onclick="location.reload()" class="hidden w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 active:scale-90 transition">
                     <i class="fas fa-home"></i>
                 </button>
             </div>
@@ -45,46 +34,27 @@
     </nav>
 
     <main class="max-w-xl mx-auto p-5">
-        
         <div id="subject-view" class="space-y-8 animate-in fade-in duration-700">
-            
             <section>
-                <h2 class="font-extrabold text-lg text-slate-800 mb-4 px-1">Live Exams</h2>
-                <div id="subject-list" class="grid grid-cols-2 gap-4">
-                    <div class="col-span-2 text-center py-10 text-slate-400 text-sm italic">Loading exams...</div>
-                </div>
+                <h2 class="font-extrabold text-lg text-slate-800 mb-4 px-1">Available Exams</h2>
+                <div id="subject-list" class="grid grid-cols-2 gap-4"></div>
             </section>
-
             <section>
                 <h2 class="font-extrabold text-lg text-slate-800 mb-4 px-1">Study Materials</h2>
-                <div id="notes-list" class="grid grid-cols-2 gap-4">
-                    <div class="col-span-2 text-center py-10 text-slate-300 text-sm italic">Fetching materials...</div>
-                </div>
+                <div id="notes-list" class="grid grid-cols-2 gap-4"></div>
             </section>
-
         </div>
 
-        <div id="quiz-view" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-                <h2 id="quiz-title" class="text-2xl font-extrabold text-slate-900 mb-2"></h2>
-                <div class="flex items-center gap-2 text-slate-400 text-xs font-medium uppercase tracking-wider">
-                    <i class="far fa-clock"></i>
-                    <span>30 Mins</span>
-                    <span>•</span>
-                    <span>Multiple Choice</span>
-                </div>
-            </div>
-            
+        <div id="quiz-view" class="hidden space-y-6 pb-20">
             <div id="questions-container" class="space-y-4"></div>
-
-            <div class="pt-4 pb-12">
-                <button onclick="calculateResult()" class="w-full bg-indigo-600 text-white py-5 rounded-[1.5rem] font-bold shadow-xl shadow-indigo-100 active:scale-95 transition-all">
+            <div class="pt-4">
+                <button type="button" onclick="calculateResult(event)" class="w-full bg-indigo-600 text-white py-5 rounded-[1.5rem] font-bold shadow-xl shadow-indigo-100 active:scale-95 transition-all">
                     Submit Final Answers
                 </button>
             </div>
         </div>
 
-        <div id="result-view" class="hidden"></div>
+        <div id="result-view" class="hidden space-y-6 pb-10 animate-in zoom-in duration-300"></div>
     </main>
 
     <script>
@@ -99,74 +69,59 @@
         let userAnswers = {};
 
         async function init() {
-            // Fetch Exams
+            // Fetch Subjects
             const { data: subjects } = await supabaseClient.from('subjects').select('*');
-            const list = document.getElementById('subject-list');
             if (subjects) {
-                list.innerHTML = subjects.map(sub => `
-                    <div onclick="startQuiz(${sub.id}, '${sub.name}')" class="glass-effect p-5 rounded-[2rem] flex flex-col items-center gap-4 active:scale-95 transition-all cursor-pointer">
-                        <div class="card-gradient-indigo w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                            <i class="${sub.icon || 'fas fa-book-open'} text-2xl"></i>
-                        </div>
-                        <div class="text-center">
-                            <div class="font-bold text-slate-800 text-sm mb-1">${sub.name}</div>
-                            <div class="text-[9px] font-black text-indigo-500 uppercase tracking-tighter">Enter Test</div>
-                        </div>
+                document.getElementById('subject-list').innerHTML = subjects.map(sub => `
+                    <div onclick="startQuiz(${sub.id}, '${sub.name}')" class="glass-effect p-5 rounded-[2rem] flex flex-col items-center gap-4 active:scale-95 transition-all cursor-pointer border-b-4 border-indigo-500/10">
+                        <div class="card-gradient-indigo w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100"><i class="${sub.icon || 'fas fa-book-open'} text-2xl"></i></div>
+                        <div class="font-bold text-slate-800 text-sm text-center line-clamp-1">${sub.name}</div>
                     </div>
                 `).join('');
             }
 
-            // Fetch Notes (using your ID, Title, File_URL logic)
-            const { data: subject_notes } = await supabaseClient.from('subject_notes').select('id, title, file_url');
-            const notesList = document.getElementById('notes-list');
-            if (subject_notes && subject_notes.length > 0) {
-                notesList.innerHTML = subject_notes.map(note => `
+            // Fetch Notes using your logic (id, title, file_url)
+            const { data: notes } = await supabaseClient.from('subject_notes').select('id, title, file_url');
+            if (notes) {
+                document.getElementById('notes-list').innerHTML = notes.map(note => `
                     <a href="${note.file_url}" target="_blank" class="glass-effect p-5 rounded-[2rem] flex flex-col items-center gap-4 active:scale-95 transition-all border-b-4 border-orange-500/10">
-                        <div class="card-gradient-orange w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                            <i class="fas fa-file-pdf text-2xl"></i>
-                        </div>
-                        <div class="text-center">
-                            <div class="font-bold text-slate-800 text-sm mb-1 line-clamp-1">${note.title}</div>
-                            <div class="text-[9px] font-black text-orange-600 uppercase tracking-tighter">Download PDF</div>
-                        </div>
+                        <div class="card-gradient-orange w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-100"><i class="fas fa-file-pdf text-2xl"></i></div>
+                        <div class="font-bold text-slate-800 text-sm text-center line-clamp-1">${note.title}</div>
                     </a>
                 `).join('');
-            } else {
-                notesList.innerHTML = `<div class="col-span-2 text-center text-slate-300 text-xs py-10">No materials available.</div>`;
             }
         }
 
         async function startQuiz(id, name) {
             currentSubjectId = id;
-            window.scrollTo({top: 0, behavior: 'smooth'});
             document.getElementById('subject-view').classList.add('hidden');
             document.getElementById('quiz-view').classList.remove('hidden');
             document.getElementById('home-btn').classList.remove('hidden');
             document.getElementById('timer-display').classList.remove('hidden');
-            document.getElementById('quiz-title').innerText = name;
             
-            const { data } = await supabaseClient.from('mcq_questions').select('*').eq('subject_id', id);
-            currentQuestions = data;
-            renderQuestions();
-            startTimer();
-        }
-
-        function renderQuestions() {
-            const container = document.getElementById('questions-container');
-            container.innerHTML = currentQuestions.map((q, i) => `
+            // Fetch Questions using your logic (id, subject_id, question_text, options, correct_option)
+            const { data: questions } = await supabaseClient.from('mcq_questions')
+                .select('id, subject_id, question_text, option_a, option_b, option_c, option_d, correct_option')
+                .eq('subject_id', id);
+            
+            currentQuestions = questions;
+            
+            document.getElementById('questions-container').innerHTML = questions.map((q, i) => `
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-50 shadow-sm">
                     <div class="text-[10px] font-extrabold text-indigo-500 mb-3 uppercase tracking-widest">Question ${i+1}</div>
                     <p class="text-lg font-bold text-slate-800 mb-6 leading-tight">${q.question_text}</p>
                     <div class="space-y-3">
                         ${['a','b','c','d'].map(opt => `
-                            <label class="flex items-center p-4 rounded-2xl border border-slate-100 bg-slate-50/50 cursor-pointer active:bg-indigo-50 transition-colors group">
+                            <label class="flex items-center p-4 rounded-2xl border border-slate-100 bg-slate-50/50 cursor-pointer active:bg-indigo-50 transition-colors">
                                 <input type="radio" name="q${q.id}" value="${opt.toUpperCase()}" class="w-5 h-5 accent-indigo-600">
-                                <span class="ml-4 font-semibold text-slate-700 group-hover:text-indigo-600">${q['option_'+opt]}</span>
+                                <span class="ml-4 font-semibold text-slate-700">${q['option_'+opt]}</span>
                             </label>
                         `).join('')}
                     </div>
                 </div>
             `).join('');
+            window.scrollTo(0,0);
+            startTimer();
         }
 
         function startTimer() {
@@ -175,23 +130,108 @@
                 let mins = Math.floor(timeLeft / 60);
                 let secs = timeLeft % 60;
                 document.getElementById('timer-display').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    calculateResult();
-                }
+                if (timeLeft <= 0) calculateResult();
             }, 1000);
         }
 
-        async function calculateResult() {
+        async function calculateResult(e) {
+            if (e) e.preventDefault();
             clearInterval(timerInterval);
+            
             let score = 0;
             currentQuestions.forEach(q => {
                 const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
-                if (selected && selected.value === q.correct_option) score++;
+                const val = selected ? selected.value : null;
+                userAnswers[q.id] = val;
+                if (val === q.correct_option) score++;
             });
-            const name = prompt("Enter your name for the leaderboard:");
-            await supabaseClient.from('test_results').insert([{ student_name: name || 'Guest', subject_id: currentSubjectId, score: score, total: currentQuestions.length }]);
-            location.reload();
+
+            const sName = prompt("Student Name for Scoreboard:") || "Anonymous Student";
+            
+            // 1. Show Scoreboard UI First
+            showScoreboard(score, currentQuestions.length, sName);
+
+            // 2. Submit to test_results in background using your logic (student_name, subject_id, score, total)
+            try {
+                await supabaseClient.from('test_results').insert([
+                    { 
+                        student_name: sName, 
+                        subject_id: currentSubjectId, 
+                        score: score, 
+                        total: currentQuestions.length 
+                    }
+                ]);
+                loadLeaderboard(); // Update leaderboard after insert
+            } catch (err) {
+                console.error("Submission error:", err);
+            }
+        }
+
+        async function showScoreboard(score, total, name) {
+            document.getElementById('quiz-view').classList.add('hidden');
+            document.getElementById('timer-display').classList.add('hidden');
+            const rv = document.getElementById('result-view');
+            rv.classList.remove('hidden');
+
+            const acc = Math.round((score/total)*100);
+            
+            rv.innerHTML = `
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-xl text-center border border-indigo-50">
+                    <div class="w-16 h-16 card-gradient-indigo rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4">🏆</div>
+                    <h2 class="text-2xl font-extrabold mb-1 text-slate-900">${name}</h2>
+                    <p class="text-4xl font-black text-indigo-600 my-4">${score} / ${total}</p>
+                    <div class="h-3 w-full bg-slate-100 rounded-full mb-6 overflow-hidden">
+                        <div class="h-full card-gradient-indigo" style="width: ${acc}%"></div>
+                    </div>
+                    <button onclick="location.reload()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold active:scale-95 transition">Return Home</button>
+                </div>
+
+                <section class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
+                    <h3 class="font-extrabold text-indigo-600 text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <i class="fas fa-medal"></i> Top Performers
+                    </h3>
+                    <div id="leaderboard-container" class="space-y-3">
+                        <p class="text-slate-400 text-xs italic text-center">Syncing rankings...</p>
+                    </div>
+                </section>
+
+                <div class="space-y-4">
+                    <h3 class="font-bold text-slate-800 ml-2">Review Sheet</h3>
+                    ${currentQuestions.map((q, i) => {
+                        const isCorrect = userAnswers[q.id] === q.correct_option;
+                        return `
+                            <div class="bg-white p-5 rounded-3xl border ${isCorrect ? 'border-emerald-100' : 'border-rose-100'}">
+                                <p class="text-sm font-bold text-slate-800 mb-2">${i+1}. ${q.question_text}</p>
+                                <div class="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                                    <span class="text-rose-500">Picked: ${userAnswers[q.id] || 'N/A'}</span>
+                                    <span class="text-emerald-500">Correct: ${q.correct_option}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>`;
+            window.scrollTo(0,0);
+            loadLeaderboard();
+        }
+
+        async function loadLeaderboard() {
+            const { data } = await supabaseClient.from('test_results')
+                .select('student_name, score, total')
+                .eq('subject_id', currentSubjectId)
+                .order('score', { ascending: false })
+                .limit(5);
+
+            if (data) {
+                document.getElementById('leaderboard-container').innerHTML = data.map((r, i) => `
+                    <div class="flex justify-between items-center p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 text-[10px] flex items-center justify-center font-bold">${i+1}</span>
+                            <span class="font-bold text-slate-700 text-sm">${r.student_name}</span>
+                        </div>
+                        <span class="text-indigo-600 font-black text-sm">${r.score}/${r.total}</span>
+                    </div>
+                `).join('');
+            }
         }
 
         window.onload = init;
