@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,6 +13,7 @@
         .card-gradient-indigo { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
         .card-gradient-orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
         .glass-effect { background: #ffffff; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
+        .feature-card { border-left: 4px solid #6366f1; }
     </style>
 </head>
 <body class="bg-[#F8FAFC] min-h-screen text-slate-900 overflow-x-hidden">
@@ -39,9 +39,29 @@
                 <h2 class="font-extrabold text-lg text-slate-800 mb-4 px-1">Available Exams</h2>
                 <div id="subject-list" class="grid grid-cols-2 gap-4"></div>
             </section>
+            
             <section>
                 <h2 class="font-extrabold text-lg text-slate-800 mb-4 px-1">Study Materials</h2>
                 <div id="notes-list" class="grid grid-cols-2 gap-4"></div>
+            </section>
+
+            <section class="mt-8 pb-10">
+                <div class="flex items-center justify-between mb-4 px-1">
+                    <h2 class="font-extrabold text-lg text-slate-800">New Features</h2>
+                    <span class="bg-indigo-100 text-indigo-600 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Update</span>
+                </div>
+                <div class="glass-effect p-6 rounded-[2.5rem] bg-white relative overflow-hidden feature-card">
+                    <i class="fas fa-rocket absolute -right-4 -bottom-4 text-slate-50 text-7xl -rotate-12"></i>
+                    <div class="relative z-10">
+                        <h3 class="font-bold text-slate-900 mb-2">VAC - Mock Test</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-5">Marks - 20    , Time - 30 minutes.</p>
+                        <a href="vac.html" target="_blank" 
+                           class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl text-xs font-extrabold transition-all active:scale-95 shadow-lg shadow-indigo-100">
+                           <span>Star Test</span>
+                           <i class="fas fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
             </section>
         </div>
 
@@ -69,7 +89,6 @@
         let userAnswers = {};
 
         async function init() {
-            // Fetch Subjects
             const { data: subjects } = await supabaseClient.from('subjects').select('*');
             if (subjects) {
                 document.getElementById('subject-list').innerHTML = subjects.map(sub => `
@@ -80,7 +99,6 @@
                 `).join('');
             }
 
-            // Fetch Notes using your logic (id, title, file_url)
             const { data: notes } = await supabaseClient.from('subject_notes').select('id, title, file_url');
             if (notes) {
                 document.getElementById('notes-list').innerHTML = notes.map(note => `
@@ -99,7 +117,6 @@
             document.getElementById('home-btn').classList.remove('hidden');
             document.getElementById('timer-display').classList.remove('hidden');
             
-            // Fetch Questions using your logic (id, subject_id, question_text, options, correct_option)
             const { data: questions } = await supabaseClient.from('mcq_questions')
                 .select('id, subject_id, question_text, option_a, option_b, option_c, option_d, correct_option')
                 .eq('subject_id', id);
@@ -148,10 +165,8 @@
 
             const sName = prompt("Student Name for Scoreboard:") || "Anonymous Student";
             
-            // 1. Show Scoreboard UI First
             showScoreboard(score, currentQuestions.length, sName);
 
-            // 2. Submit to test_results in background using your logic (student_name, subject_id, score, total)
             try {
                 await supabaseClient.from('test_results').insert([
                     { 
@@ -161,7 +176,7 @@
                         total: currentQuestions.length 
                     }
                 ]);
-                loadLeaderboard(); // Update leaderboard after insert
+                loadLeaderboard();
             } catch (err) {
                 console.error("Submission error:", err);
             }
