@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yoga Final Exam - বঙ্গভূমির শিক্ষা</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #e11b22; --dark: #1a1a1a; --success: #2ecc71; --bg: #f5f6fa; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background: var(--bg); color: #333; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        /* Header & Timer */
+        header { background: #fff; padding: 15px 0; border-bottom: 3px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; }
+        #timer-box { background: var(--dark); color: #ffeb3b; padding: 8px 15px; border-radius: 5px; font-weight: 700; font-size: 20px; }
+        .home-link { text-decoration: none; color: var(--dark); font-weight: 700; display: flex; align-items: center; gap: 5px; }
+
+        /* Quiz UI */
+        .quiz-container { margin-top: 30px; }
+        .quiz-item { background: #fff; padding: 25px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .q-text { font-size: 19px; font-weight: 700; margin-bottom: 20px; display: block; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .opt-label { border: 2px solid #f0f0f0; padding: 12px 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; font-weight: 500; }
+        .opt-label:hover { border-color: var(--primary); background: #fff8f8; }
+        input[type="radio"] { accent-color: var(--primary); transform: scale(1.2); }
+
+        /* Scoreboard */
+        #scoreboard { display: none; background: #fff; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 5px 25px rgba(0,0,0,0.1); margin-top: 50px; }
+        .grade-text { font-size: 50px; font-weight: 900; color: var(--primary); margin: 20px 0; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 30px 0; }
+        .stat-item { background: #f8f9fa; padding: 15px; border-radius: 10px; }
+        .stat-val { font-size: 24px; font-weight: 700; display: block; }
+        
+        .btn-submit { background: var(--primary); color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 20px; }
+        .btn-home { background: var(--dark); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; display: inline-block; margin-top: 20px; font-weight: 600; }
+
+        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container header-flex">
+        <a href="index.html" class="home-link">🏠 Home</a>
+        <div id="timer-box">সময়: <span id="time">30:00</span></div>
+    </div>
+</header>
+
+<div class="container">
+    <div id="exam-section">
+        <h2 style="margin: 20px 0; text-align: center;">Yoga & Wellness (VAC) Final Exam</h2>
+        <div class="quiz-container" id="quiz-list"></div>
+        <button class="btn-submit" onclick="finishExam()">পরীক্ষা শেষ করুন (Submit)</button>
+    </div>
+
+    <div id="scoreboard">
+        <h1 style="color: var(--dark);">আপনার রেজাল্ট কার্ড</h1>
+        <div class="grade-text" id="grade-val">A+</div>
+        <div class="stats-grid">
+            <div class="stat-item">মোট প্রশ্ন<br><span class="stat-val" id="total-q">0</span></div>
+            <div class="stat-item">সঠিক উত্তর<br><span class="stat-val" id="correct-q" style="color: var(--success);">0</span></div>
+            <div class="stat-item">প্রাপ্ত নম্বর<br><span class="stat-val" id="final-score">0%</span></div>
+        </div>
+        <p id="performance-msg" style="font-size: 18px; color: #666; margin-bottom: 20px;"></p>
+        <a href="index.html" class="btn-home">Back to Home</a>
+    </div>
+</div>
+
+<script>
+    const allQuestions = [
+        { q: "Yoga শব্দটি কোন শব্দ থেকে এসেছে?", options: ["Yatna", "Yuj", "Yogi", "Yajna"], correct: 1 },
+        { q: "যোগের জনক (Father of Yoga) কাকে বলা হয়?", options: ["স্বামী বিবেকানন্দ", "মহর্ষি পতঞ্জলি", "আদি গুরু", "কপিল মুনি"], correct: 1 },
+        { q: "'Yuj' শব্দটি কোথায় উল্লেখ করা হয়েছে?", options: ["ঋগ্বেদে", "পাণিনির ধাতুপাঠে", "রামায়ণে", "মহাভারতে"], correct: 1 },
+        { q: "'YUJ Samadhau' শব্দের অর্থ কী?", options: ["মিলন", "সমাধি বা পরম মুক্তি", "সংযম", "ব্যায়াম"], correct: 1 },
+        { q: "'Yujir yoga' শব্দের অর্থ কী?", options: ["সংযম", "মিলন বা সংযোগ", "মুক্তি", "ধ্যান"], correct: 1 },
+        { q: "'Yuj Sanyama' শব্দের অর্থ কী?", options: ["মিলন", "সমাধি", "সংযম", "আসন"], correct: 2 },
+        { q: "'Yoga-chitta-vritti-nirodha' উক্তিটি কার?", options: ["শ্রীকৃষ্ণ", "পতঞ্জলি", "শঙ্করাচার্য", "বুদ্ধ"], correct: 1 },
+        { q: "'Samatvam Yoga Uchyate' কোথায় উল্লেখ আছে?", options: ["গীতা (২/৪৮)", "গীতা (২/৫০)", "উপনিষদ", "বেদ"], correct: 0 },
+        { q: "'Yogah Karmasu Kaushalam' কোথায় উল্লেখ আছে?", options: ["গীতা (২/৪৮)", "গীতা (২/৫০)", "বেদ", "পুরাণ"], correct: 1 },
+        { q: "যোগের লক্ষ্য (Aim) কী?", options: ["শরীরের শক্তি বাড়ানো", "আত্মোপলব্ধি ও সুস্থতা", "শুধু ওজন কমানো", "খেলাধুলা করা"], correct: 1 },
+        { q: "কোন সভ্যতাকে যোগের উৎপত্তিস্থল বলা হয়?", options: ["মিশরীয়", "সিন্ধু সভ্যতা", "মেসোপটেমিয়া", "চীনা"], correct: 1 },
+        { q: "কোন শীলমোহরে যোগের ভঙ্গি পাওয়া গেছে?", options: ["পশুপতি শীল", "বৌদ্ধ শীল", "অশোক স্তম্ভ", "স্বস্তিকা"], correct: 0 },
+        { q: "প্রধান উপনিষদ কয়টি?", options: ["৮টি", "১০টি", "১০৮টি", "১৮টি"], correct: 1 },
+        { q: "যোগ উপনিষদ কয়টি?", options: ["১০টি", "৮টি", "১২টি", "৫টি"], correct: 1 },
+        { q: "মোট উপনিষদের সংখ্যা কয়টি?", options: ["১০টি", "১০৮টি", "১০১০টি", "১৮টি"], correct: 1 },
+        { q: "কোন শাস্ত্রে মানব জীবনের ম্যানুয়াল (Manual) বলা হয়?", options: ["রামায়ণ", "মহাভারত", "ভগবদ্গীতা", "উপনিষদ"], correct: 2 },
+        { q: "অষ্টাঙ্গ যোগের কয়টি অঙ্গ?", options: ["৫টি", "৮টি", "১০টি", "৭টি"], correct: 1 },
+        { q: "প্রথম আন্তর্জাতিক যোগ দিবস কবে পালিত হয়?", options: ["২০১৪", "২০১৫", "২০১৬", "২০১৩"], correct: 1 },
+        { q: "WHO-এর স্বাস্থ্যের সংজ্ঞায় কোন দিকটি নেই?", options: ["শারীরিক", "মানসিক", "আধ্যাত্মিক", "সামাজিক"], correct: 2 },
+        { q: "কোন প্রাণায়াম ঘুমের মান ভালো করে?", options: ["ভস্ত্রিকা", "কপালভাতি", "ভ্রামরী", "সূর্যভেদী"], correct: 2 },
+        { q: "ম্যাক্রো নিউট্রিয়েন্ট কোনটি?", options: ["ভিটামিন", "মিনারেল", "প্রোটিন", "আয়োডিন"], correct: 2 },
+        { q: "ভালো বা ইতিবাচক মানসিক চাপকে কী বলে?", options: ["Distress", "Eustress", "Acute", "Chronic"], correct: 1 },
+        { q: "অল্প সময়ের জন্য হওয়া মানসিক চাপকে কী বলে?", options: ["Chronic", "Acute stress", "Distress", "Eustress"], correct: 1 },
+        { q: "BMI-এর স্বাভাবিক মাত্রা কত?", options: ["১৮.৫০-২৪.৯৯", "১৭.০০-১৮.৫০", "২৫.০০-২৯.৯৯", "৩০.০০+"], correct: 0 },
+        { q: "BMI-এর প্রতিষ্ঠাতা কে?", options: ["নিউটন", "ল্যাম্বার্ট অ্যাডলফ জ্যাক কোয়েটলেট", "আইনস্টাইন", "অ্যারিস্টটল"], correct: 1 },
+        { q: "অপুষ্টির (First rate malnutrition) BMI মাত্রা কত?", options: ["১৭.০০-১৮.৫০", "১৮.৫০-২৪.৯৯", "১৬.০০-১৭.০০", "১৫.০০-১৬.০০"], correct: 0 }
+    ]; // এখানে আপনি একইভাবে বাকি প্রশ্নগুলো যোগ করতে পারেন।
+
+    let timeLeft = 30 * 60;
+    const timerDisplay = document.getElementById('time');
+
+    function startTimer() {
+        const timerInterval = setInterval(() => {
+            let min = Math.floor(timeLeft / 60);
+            let sec = timeLeft % 60;
+            timerDisplay.innerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+            if (timeLeft <= 0) { clearInterval(timerInterval); finishExam(); }
+            timeLeft--;
+        }, 1000);
+    }
+
+    function loadQuiz() {
+        const list = document.getElementById('quiz-list');
+        allQuestions.forEach((item, index) => {
+            list.innerHTML += `
+                <div class="quiz-item">
+                    <span class="q-text">${index + 1}. ${item.q}</span>
+                    <div class="options-grid">
+                        ${item.options.map((opt, i) => `
+                            <label class="opt-label">
+                                <input type="radio" name="q${index}" value="${i}"> ${opt}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function finishExam() {
+        let score = 0;
+        allQuestions.forEach((item, index) => {
+            const sel = document.querySelector(`input[name="q${index}"]:checked`);
+            if (sel && parseInt(sel.value) === item.correct) score++;
+        });
+
+        document.getElementById('exam-section').style.display = 'none';
+        document.getElementById('scoreboard').style.display = 'block';
+        window.scrollTo(0,0);
+
+        const pc = Math.round((score / allQuestions.length) * 100);
+        document.getElementById('total-q').innerText = allQuestions.length;
+        document.getElementById('correct-q').innerText = score;
+        document.getElementById('final-score').innerText = pc + "%";
+
+        let grade = pc >= 80 ? "A+" : pc >= 60 ? "A" : pc >= 40 ? "B" : "F";
+        document.getElementById('grade-val').innerText = grade;
+        document.getElementById('performance-msg').innerText = pc >= 40 ? "অভিনন্দন! আপনি পরীক্ষায় উত্তীর্ণ হয়েছেন।" : "দুঃখিত! আপনাকে আরও পড়াশোনা করতে হবে।";
+    }
+
+    window.onload = () => { loadQuiz(); startTimer(); };
+</script>
+
+</body>
+</html>
