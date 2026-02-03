@@ -1,255 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Boraho Cyber Cafe - Premium MCQ Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বঙ্গভূমির শিক্ষা - কলম</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
-        .card-gradient-indigo { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
-        .card-gradient-orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .glass-effect { background: #ffffff; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
-        .feature-card { border-left: 4px solid #6366f1; }
+        :root { 
+            --primary-red: #e11b22; 
+            --dark: #222; 
+            --bg: #f8f9fa; 
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        
+        body { background: var(--bg); color: #333; line-height: 1.6; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+
+        /* Header */
+        header { background: var(--white); padding: 30px 0; border-bottom: 4px solid var(--primary-red); text-align: center; }
+        .logo h1 { font-size: clamp(32px, 5vw, 50px); color: var(--primary-red); font-weight: 700; letter-spacing: -1px; }
+        .logo p { font-style: italic; color: #666; font-size: 16px; margin-top: 5px; }
+
+        /* Navigation */
+        nav { background: var(--dark); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        nav ul { list-style: none; display: flex; overflow-x: auto; scrollbar-width: none; }
+        nav ul::-webkit-scrollbar { display: none; }
+        nav ul li a { display: block; padding: 15px 20px; color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; }
+        nav ul li a:hover { background: var(--primary-red); }
+
+        /* Breaking News */
+        .breaking { background: var(--white); margin: 20px 0; border: 1px solid #ddd; display: flex; align-items: center; border-radius: 4px; overflow: hidden; }
+        .b-label { background: var(--primary-red); color: #fff; padding: 10px 20px; font-weight: bold; white-space: nowrap; }
+        marquee { font-weight: 600; color: #444; }
+
+        /* Layout Grid */
+        .grid { display: grid; grid-template-columns: 1fr 320px; gap: 25px; margin-top: 20px; }
+
+        /* News Cards */
+        .card { background: var(--white); margin-bottom: 25px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid #eee; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .card img { width: 100%; height: 220px; object-fit: cover; cursor: pointer; }
+        .card-body { padding: 20px; }
+        .cat { color: var(--primary-red); font-weight: 700; font-size: 13px; text-transform: uppercase; }
+        .title { font-size: 22px; margin: 10px 0; line-height: 1.4; font-weight: 700; color: #111; text-decoration: none; display: block; transition: 0.2s; }
+        .title:hover { color: var(--primary-red); }
+        .meta { font-size: 13px; color: #888; border-top: 1px solid #eee; margin-top: 15px; padding-top: 10px; }
+
+        /* Sidebar Styles */
+        .side-box { background: var(--white); padding: 20px; margin-bottom: 25px; border-radius: 8px; border-top: 4px solid var(--primary-red); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .side-title { font-size: 18px; margin-bottom: 20px; border-bottom: 2px solid #f4f4f4; padding-bottom: 8px; font-weight: 700; position: relative; }
+        .side-title::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 50px; height: 2px; background: var(--primary-red); }
+        
+        .side-item { display: flex; gap: 12px; margin-bottom: 15px; text-decoration: none; color: inherit; align-items: center; transition: 0.3s; }
+        .side-item:last-child { margin-bottom: 0; }
+        .side-item img { width: 70px; height: 60px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+        .side-item p { font-size: 14px; font-weight: 600; line-height: 1.3; }
+        .side-item:hover p { color: var(--primary-red); }
+
+        /* Footer */
+        footer { background: var(--dark); color: #bbb; padding: 50px 0 20px; text-align: center; margin-top: 50px; }
+        footer p { margin-bottom: 10px; }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .grid { grid-template-columns: 1fr; }
+            .side-box { margin-top: 20px; }
+        }
     </style>
 </head>
-<body class="bg-[#F8FAFC] min-h-screen text-slate-900 overflow-x-hidden">
+<body>
 
-    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
-        <div class="max-w-xl mx-auto px-5 py-4 flex justify-between items-center">
-            <div>
-                <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-[0.2em] mb-0.5">Assessment Portal</p>
-                <h1 class="font-extrabold text-xl text-slate-900 tracking-tight">Boraho Cyber Cafe</h1>
-            </div>
-            <div class="flex items-center gap-3">
-                <div id="timer-display" class="hidden bg-rose-50 text-rose-600 px-3 py-1.5 rounded-xl font-bold text-xs border border-rose-100 animate-pulse">30:00</div>
-                <button id="home-btn" onclick="location.reload()" class="hidden w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 active:scale-90 transition">
-                    <i class="fas fa-home"></i>
-                </button>
-            </div>
+<header>
+    <div class="container">
+        <div class="logo">
+            <h1>বঙ্গভূমির শিক্ষা</h1>
+            <p>তরোয়ালের চেয়ে শক্তিশালী হাতিয়ার হল কলম</p>
         </div>
-    </nav>
+    </div>
+</header>
 
-    <main class="max-w-xl mx-auto p-5">
-        <div id="subject-view" class="space-y-8 animate-in fade-in duration-700">
-            <section>
-                <h2 class="font-extrabold text-lg text-slate-800 mb-4 px-1">Available Exams</h2>
-                <div id="subject-list" class="grid grid-cols-2 gap-4"></div>
-            </section>
-            
-            <section>
-                <h2 class="font-extrabold text-lg text-slate-800 mb-4 px-1">Study Materials</h2>
-                <div id="notes-list" class="grid grid-cols-2 gap-4"></div>
-            </section>
+<nav>
+    <div class="container">
+        <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="#">COMPUTER SCIENCE</a></li>
+            <li><a href="#">BCA</a></li>
+            <li><a href="#">COMPITTITIVE EXAM</a></li>
+            <li><a href="#">CURRENT AFFAIRS</a></li>
+            <li><a href="#">GRADUATION SUBJECTS</a></li>
+            <li><a href="exam.html">EXAM</a></li>
+        </ul>
+    </div>
+</nav>
 
-            <section class="mt-8 pb-10">
-                <div class="flex items-center justify-between mb-4 px-1">
-                    <h2 class="font-extrabold text-lg text-slate-800">New Features</h2>
-                    <span class="bg-indigo-100 text-indigo-600 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Update</span>
-                </div>
-                <div class="glass-effect p-6 rounded-[2.5rem] bg-white relative overflow-hidden feature-card">
-                    <i class="fas fa-rocket absolute -right-4 -bottom-4 text-slate-50 text-7xl -rotate-12"></i>
-                    <div class="relative z-10">
-                        <h3 class="font-bold text-slate-900 mb-2">VAC - Mock Test</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed mb-5">Marks - 20    , Time - 30 minutes.</p>
-                        <a href="vac.html" target="_blank" 
-                           class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl text-xs font-extrabold transition-all active:scale-95 shadow-lg shadow-indigo-100">
-                           <span>Star Test</span>
-                           <i class="fas fa-arrow-right text-[10px]"></i>
-                        </a>
-                    </div>
-                </div>
-            </section>
-        </div>
+<div class="container">
+    <div class="breaking">
+        <div class="b-label">ব্রেকিং নিউজ</div>
+        <marquee onmouseover="this.stop();" onmouseout="this.start();">
+            Happy New Year - 2026
+        </marquee>
+    </div>
 
-        <div id="quiz-view" class="hidden space-y-6 pb-20">
-            <div id="questions-container" class="space-y-4"></div>
-            <div class="pt-4">
-                <button type="button" onclick="calculateResult(event)" class="w-full bg-indigo-600 text-white py-5 rounded-[1.5rem] font-bold shadow-xl shadow-indigo-100 active:scale-95 transition-all">
-                    Submit Final Answers
-                </button>
+    <div class="grid">
+        <main id="news-list"></main>
+
+        <aside>
+            <div class="side-box">
+                <h3 class="side-title">জনপ্রিয় পোস্ট</h3>
+                <div id="popular-list"></div>
             </div>
-        </div>
 
-        <div id="result-view" class="hidden space-y-6 pb-10 animate-in zoom-in duration-300"></div>
-    </main>
+            <div class="side-box">
+                <h3 class="side-title">আর্কাইভ</h3>
+                <select style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
+                    <option>ফেব্রুয়ারি ২০২৬</option>
+                    <option>জানুয়ারি ২০২৬</option>
+                </select>
+            </div>
+        </aside>
+    </div>
+</div>
 
-    <script>
-        const SUPABASE_URL = 'https://davooosesbapgewtcyik.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_THkC7qwhu1c13x53XvtcpA_GPPxmcal'; 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<footer>
+    <div class="container">
+        <p>Copyright © 2026 <strong>বঙ্গভূমির শিক্ষা</strong>। সর্বস্বত্ব সংরক্ষিত।</p>
+        <p style="font-size: 13px; color: #777;">Developed by Subhadip Satpati</p>
+    </div>
+</footer>
 
-        let currentQuestions = [];
-        let currentSubjectId = null;
-        let timerInterval;
-        let timeLeft = 30 * 60;
-        let userAnswers = {};
-
-        async function init() {
-            const { data: subjects } = await supabaseClient.from('subjects').select('*');
-            if (subjects) {
-                document.getElementById('subject-list').innerHTML = subjects.map(sub => `
-                    <div onclick="startQuiz(${sub.id}, '${sub.name}')" class="glass-effect p-5 rounded-[2rem] flex flex-col items-center gap-4 active:scale-95 transition-all cursor-pointer border-b-4 border-indigo-500/10">
-                        <div class="card-gradient-indigo w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100"><i class="${sub.icon || 'fas fa-book-open'} text-2xl"></i></div>
-                        <div class="font-bold text-slate-800 text-sm text-center line-clamp-1">${sub.name}</div>
-                    </div>
-                `).join('');
-            }
-
-            const { data: notes } = await supabaseClient.from('subject_notes').select('id, title, file_url');
-            if (notes) {
-                document.getElementById('notes-list').innerHTML = notes.map(note => `
-                    <a href="${note.file_url}" target="_blank" class="glass-effect p-5 rounded-[2rem] flex flex-col items-center gap-4 active:scale-95 transition-all border-b-4 border-orange-500/10">
-                        <div class="card-gradient-orange w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-100"><i class="fas fa-file-pdf text-2xl"></i></div>
-                        <div class="font-bold text-slate-800 text-sm text-center line-clamp-1">${note.title}</div>
-                    </a>
-                `).join('');
-            }
+<script>
+    /* কিভাবে নতুন পোস্ট যোগ করবেন:
+       নিচের newsData এর ভেতর নতুন অবজেক্ট যোগ করুন। 
+       'url' এর জায়গায় ওই পোস্টের জন্য তৈরি করা আলাদা HTML ফাইলের নাম দিন।
+    */
+    const newsData = [
+        {
+            title: "Yoga & Fitness",
+            cat: "Value Add Course (Graduation Level)",
+            date: "Feb 03, 2026",
+            img: "https://th.bing.com/th/id/OIP.TN8kidnd_1MEzMtfLxRTdgHaE7?w=251&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+            url: "vac.html" // এই ফাইলে ক্লিক করলে যাবে
+        },
+        {
+            title: "ভারতের ইতিহাসের গুরুত্বপূর্ণ ১০০টি প্রশ্ন ও উত্তর",
+            cat: "GK History",
+            date: "Feb 02, 2026",
+            img: "https://th.bing.com/th/id/OIP.a7oFx6sB-RihI2KUv1ZCIQHaEr?w=249&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+            url: "posts/history-gk.html"
+        },
+        {
+            title: "MS Excel এর কিছু গুরুত্বপূর্ণ শর্টকাট কী",
+            cat: "Computer Science",
+            date: "Jan 30, 2026",
+            img: "https://th.bing.com/th/id/OIP.ld-xSieKXbwI1J43-lxHpAHaEK?w=256&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+            url: "posts/excel-shortcuts.html"
         }
+    ];
 
-        async function startQuiz(id, name) {
-            currentSubjectId = id;
-            document.getElementById('subject-view').classList.add('hidden');
-            document.getElementById('quiz-view').classList.remove('hidden');
-            document.getElementById('home-btn').classList.remove('hidden');
-            document.getElementById('timer-display').classList.remove('hidden');
-            
-            const { data: questions } = await supabaseClient.from('mcq_questions')
-                .select('id, subject_id, question_text, option_a, option_b, option_c, option_d, correct_option')
-                .eq('subject_id', id);
-            
-            currentQuestions = questions;
-            
-            document.getElementById('questions-container').innerHTML = questions.map((q, i) => `
-                <div class="bg-white p-6 rounded-[2rem] border border-slate-50 shadow-sm">
-                    <div class="text-[10px] font-extrabold text-indigo-500 mb-3 uppercase tracking-widest">Question ${i+1}</div>
-                    <p class="text-lg font-bold text-slate-800 mb-6 leading-tight">${q.question_text}</p>
-                    <div class="space-y-3">
-                        ${['a','b','c','d'].map(opt => `
-                            <label class="flex items-center p-4 rounded-2xl border border-slate-100 bg-slate-50/50 cursor-pointer active:bg-indigo-50 transition-colors">
-                                <input type="radio" name="q${q.id}" value="${opt.toUpperCase()}" class="w-5 h-5 accent-indigo-600">
-                                <span class="ml-4 font-semibold text-slate-700">${q['option_'+opt]}</span>
-                            </label>
-                        `).join('')}
-                    </div>
+    // জনপ্রিয় পোস্টের লিস্ট
+    const popularData = [
+        { title: "Food SI Previous Year Question PDF", img: "https://via.placeholder.com/80", url: "posts/food-si.html" },
+        { title: "Madhyamik 2025 Question Download", img: "https://via.placeholder.com/80", url: "posts/madhyamik.html" },
+        { title: "Periodic Table Bengali PDF", img: "https://via.placeholder.com/80", url: "posts/periodic-table.html" }
+    ];
+
+    // Main News Generation
+    const mainFeed = document.getElementById('news-list');
+    newsData.forEach(item => {
+        mainFeed.innerHTML += `
+            <article class="card">
+                <a href="${item.url}"><img src="${item.img}" alt="${item.title}"></a>
+                <div class="card-body">
+                    <span class="cat">${item.cat}</span>
+                    <a href="${item.url}" class="title">${item.title}</a>
+                    <div class="meta">বঙ্গভূমির শিক্ষা • ${item.date} • Admin</div>
                 </div>
-            `).join('');
-            window.scrollTo(0,0);
-            startTimer();
-        }
+            </article>
+        `;
+    });
 
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                let mins = Math.floor(timeLeft / 60);
-                let secs = timeLeft % 60;
-                document.getElementById('timer-display').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                if (timeLeft <= 0) calculateResult();
-            }, 1000);
-        }
+    // Popular Sidebar Generation
+    const sideFeed = document.getElementById('popular-list');
+    popularData.forEach(item => {
+        sideFeed.innerHTML += `
+            <a href="${item.url}" class="side-item">
+                <img src="${item.img}" alt="Thumb">
+                <p>${item.title}</p>
+            </a>
+        `;
+    });
+</script>
 
-        async function calculateResult(e) {
-            if (e) e.preventDefault();
-            clearInterval(timerInterval);
-            
-            let score = 0;
-            currentQuestions.forEach(q => {
-                const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
-                const val = selected ? selected.value : null;
-                userAnswers[q.id] = val;
-                if (val === q.correct_option) score++;
-            });
-
-            const sName = prompt("Student Name for Scoreboard:") || "Anonymous Student";
-            
-            showScoreboard(score, currentQuestions.length, sName);
-
-            try {
-                await supabaseClient.from('test_results').insert([
-                    { 
-                        student_name: sName, 
-                        subject_id: currentSubjectId, 
-                        score: score, 
-                        total: currentQuestions.length 
-                    }
-                ]);
-                loadLeaderboard();
-            } catch (err) {
-                console.error("Submission error:", err);
-            }
-        }
-
-        async function showScoreboard(score, total, name) {
-            document.getElementById('quiz-view').classList.add('hidden');
-            document.getElementById('timer-display').classList.add('hidden');
-            const rv = document.getElementById('result-view');
-            rv.classList.remove('hidden');
-
-            const acc = Math.round((score/total)*100);
-            
-            rv.innerHTML = `
-                <div class="bg-white p-8 rounded-[2.5rem] shadow-xl text-center border border-indigo-50">
-                    <div class="w-16 h-16 card-gradient-indigo rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4">🏆</div>
-                    <h2 class="text-2xl font-extrabold mb-1 text-slate-900">${name}</h2>
-                    <p class="text-4xl font-black text-indigo-600 my-4">${score} / ${total}</p>
-                    <div class="h-3 w-full bg-slate-100 rounded-full mb-6 overflow-hidden">
-                        <div class="h-full card-gradient-indigo" style="width: ${acc}%"></div>
-                    </div>
-                    <button onclick="location.reload()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold active:scale-95 transition">Return Home</button>
-                </div>
-
-                <section class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-                    <h3 class="font-extrabold text-indigo-600 text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <i class="fas fa-medal"></i> Top Performers
-                    </h3>
-                    <div id="leaderboard-container" class="space-y-3">
-                        <p class="text-slate-400 text-xs italic text-center">Syncing rankings...</p>
-                    </div>
-                </section>
-
-                <div class="space-y-4">
-                    <h3 class="font-bold text-slate-800 ml-2">Review Sheet</h3>
-                    ${currentQuestions.map((q, i) => {
-                        const isCorrect = userAnswers[q.id] === q.correct_option;
-                        return `
-                            <div class="bg-white p-5 rounded-3xl border ${isCorrect ? 'border-emerald-100' : 'border-rose-100'}">
-                                <p class="text-sm font-bold text-slate-800 mb-2">${i+1}. ${q.question_text}</p>
-                                <div class="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                                    <span class="text-rose-500">Picked: ${userAnswers[q.id] || 'N/A'}</span>
-                                    <span class="text-emerald-500">Correct: ${q.correct_option}</span>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>`;
-            window.scrollTo(0,0);
-            loadLeaderboard();
-        }
-
-        async function loadLeaderboard() {
-            const { data } = await supabaseClient.from('test_results')
-                .select('student_name, score, total')
-                .eq('subject_id', currentSubjectId)
-                .order('score', { ascending: false })
-                .limit(5);
-
-            if (data) {
-                document.getElementById('leaderboard-container').innerHTML = data.map((r, i) => `
-                    <div class="flex justify-between items-center p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                        <div class="flex items-center gap-3">
-                            <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 text-[10px] flex items-center justify-center font-bold">${i+1}</span>
-                            <span class="font-bold text-slate-700 text-sm">${r.student_name}</span>
-                        </div>
-                        <span class="text-indigo-600 font-black text-sm">${r.score}/${r.total}</span>
-                    </div>
-                `).join('');
-            }
-        }
-
-        window.onload = init;
-    </script>
 </body>
 </html>
