@@ -1,577 +1,304 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>EDU EXAMINER - AEC English 2025</title>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-
         :root {
-
             --primary-bg: #2c3e50;
-
             --secondary-bg: #34495e;
-
             --active-blue: #2980b9;
-
             --sidebar-width: 200px;
-
             --success-green: #27ae60;
-
             --paper-color: #fdfaf0;
-
         }
-
-
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         
-
         body { 
-
             background-color: #d1d9e0; 
-
             height: 100vh; 
-
             display: flex; 
-
             flex-direction: column; 
-
             overflow: hidden; 
-
             font-family: "Times New Roman", Times, serif; 
-
         }
-
-
 
         /* --- Login Screen --- */
-
         #login-screen {
-
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-
             background: var(--primary-bg); z-index: 100; display: flex; 
-
             justify-content: center; align-items: center; color: white;
-
         }
-
         .login-box {
-
             background: var(--paper-color); padding: 30px; border-radius: 4px; 
-
             width: 90%; max-width: 400px; text-align: center; color: #333;
-
             box-shadow: 0 0 20px rgba(0,0,0,0.5); border: 2px solid #ddd;
-
         }
-
         .login-box h2 { margin-bottom: 20px; color: var(--primary-bg); border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
-
         .login-box input {
-
             width: 100%; padding: 12px; margin-bottom: 20px; 
-
             border: 1px solid #999; border-radius: 0; font-size: 16px; font-family: inherit;
-
         }
-
-
 
         /* --- Header --- */
-
         .header-main { background-color: var(--primary-bg); height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; color: white; flex-shrink: 0; }
-
-        .logo { font-size: 20px; font-weight: bold; letter-spacing: 1px; }
-
-        .candidate-tag { background: var(--paper-color); color: #333; padding: 4px 12px; border-radius: 2px; font-weight: bold; border: 1px solid #ccc; font-size: 14px; }
-
-
+        .logo { font-size: 16px; font-weight: bold; letter-spacing: 1px; }
+        .candidate-tag { background: var(--paper-color); color: #333; padding: 4px 10px; border-radius: 2px; font-weight: bold; border: 1px solid #ccc; font-size: 12px; }
 
         /* --- Main Layout --- */
-
         .app-body { display: flex; flex: 1; overflow: hidden; position: relative; }
-
-        .sidebar { width: var(--sidebar-width); background-color: var(--primary-bg); display: flex; flex-direction: column; }
-
+        
+        .sidebar { width: var(--sidebar-width); background-color: var(--primary-bg); display: flex; flex-direction: column; flex-shrink: 0; }
         .side-item { padding: 15px; color: #bdc3c7; border-bottom: 1px solid #3e4f5f; font-size: 13px; }
-
         .sidebar-timer { margin-top: auto; background: #1a252f; padding: 20px; text-align: center; color: #fff; border-top: 2px solid #e74c3c; }
-
         #timer-text { font-size: 22px; font-weight: bold; color: #ff4d4d; font-family: monospace; }
 
-
-
         /* Content Area */
-
-        .content-main { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; }
-
+        .content-main { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; width: 100%; }
         .white-sheet { 
-
             background: var(--paper-color); 
-
             flex: 1; border-radius: 0; display: flex; flex-direction: column; 
-
             box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
-
             border: 1px solid #dcdcdc;
-
+            overflow: hidden;
         }
-
         
-
-        .sheet-tabs { padding: 10px 15px; border-bottom: 2px solid #2c3e50; font-size: 14px; font-weight: bold; color: #2c3e50; background: #eee; }
-
-
+        .sheet-tabs { padding: 10px 15px; border-bottom: 2px solid #2c3e50; font-size: 14px; font-weight: bold; color: #2c3e50; background: #eee; flex-shrink: 0; }
 
         /* Pages */
-
-        #instruction-page, #question-page, #score-page { flex: 1; display: none; flex-direction: column; }
-
+        #instruction-page, #question-page, #score-page { flex: 1; display: none; flex-direction: column; overflow: hidden; }
         #instruction-page.active, #question-page.active { display: flex; }
 
-
-
         .instruction-image-container { flex: 1; padding: 10px; display: flex; justify-content: center; overflow: auto; background: white; }
-
-        .instruction-image-container img { max-width: 100%; height: auto; }
-
-
+        .instruction-image-container img { max-width: 100%; height: auto; align-self: flex-start; }
 
         /* Question Styles */
-
-        .question-box { padding: 30px; flex: 1; }
-
-        .question-box h3 { font-size: 22px; color: #000; margin: 20px 0; border-bottom: 1px solid #ccc; padding-bottom: 10px; line-height: 1.5; }
-
+        .question-box { padding: 15px; flex: 1; overflow-y: auto; }
+        .question-box h3 { font-size: 18px; color: #000; margin: 15px 0; border-bottom: 1px solid #ccc; padding-bottom: 10px; line-height: 1.4; }
         .option-item { 
-
-            padding: 15px 20px; border: 1px solid #999; margin-bottom: 12px; cursor: pointer; 
-
-            font-size: 18px; background: #fff; transition: 0.2s;
-
+            padding: 12px 15px; border: 1px solid #999; margin-bottom: 10px; cursor: pointer; 
+            font-size: 16px; background: #fff; transition: 0.2s;
         }
-
         .option-item:hover { background: #f0f0f0; border-color: #000; }
-
         .option-item.selected { background: #2c3e50; color: #fff; border-color: #2c3e50; }
 
-
-
         /* Footer */
-
-        .footer-controls { padding: 20px; text-align: center; border-top: 2px solid #2c3e50; background: #eee; }
-
-        .btn-group { display: flex; justify-content: center; align-items: center; gap: 15px; }
-
+        .footer-controls { padding: 15px; text-align: center; border-top: 2px solid #2c3e50; background: #eee; flex-shrink: 0; }
+        .btn-group { display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; }
         button { 
-
-            padding: 12px 25px; border-radius: 0; border: 1px solid #2c3e50; 
-
-            font-weight: bold; cursor: pointer; font-family: inherit; font-size: 15px;
-
+            padding: 10px 20px; border-radius: 0; border: 1px solid #2c3e50; 
+            font-weight: bold; cursor: pointer; font-family: inherit; font-size: 14px;
         }
-
         .btn-start { background: #27ae60; color: white; border: none; }
-
         .btn-start:disabled { background: #ccc; cursor: not-allowed; color: #666; }
-
         .btn-nav { background: #fff; color: #333; }
 
-
-
-        @media (max-width: 768px) { .sidebar { display: none; } }
-
+        /* --- MOBILE RESPONSIVE FIX --- */
+        @media (max-width: 768px) { 
+            .sidebar { display: none; } /* মোবাইলে সাইডবার হাইড করা হয়েছে জায়গা বাঁচানোর জন্য */
+            .logo { font-size: 14px; }
+            .header-main { padding: 0 10px; }
+            .question-box h3 { font-size: 16px; }
+            .option-item { font-size: 15px; padding: 10px; }
+            .instruction-image-container { padding: 5px; }
+            .footer-controls { padding: 10px; }
+            button { padding: 8px 15px; font-size: 13px; }
+        }
     </style>
-
 </head>
-
 <body>
 
-
-
     <div id="login-screen">
-
         <div class="login-box">
-
             <h2>EXAMINATION PORTAL</h2>
-
             <p style="margin-bottom: 15px; font-style: italic;">(Candidate Authentication Required)</p>
-
             <input type="text" id="user-name-input" placeholder="ENTER CANDIDATE NAME">
-
             <button class="btn-start" onclick="enterPortal()">PROCEED TO EXAM</button>
-
         </div>
-
     </div>
-
-
 
     <div class="header-main">
-
-        <div class="logo">EDU EXAMINER - SEM I 2025</div>
-
+        <div class="logo">EDU EXAMINER - 2025</div>
         <div class="candidate-tag" id="header-name">Candidate: </div>
-
     </div>
-
-
 
     <div class="app-body">
-
         <div class="sidebar">
-
             <div class="side-item" style="color:#fff; background: #1a252f;"><i class="fas fa-file-alt"></i> BOOKLET: AEC (TH)</div>
-
             <div class="side-item"><i class="fas fa-book"></i> SUBJECT: ENGLISH</div>
-
             <div class="sidebar-timer">
-
                 <small>REMAINING TIME</small>
-
                 <span id="timer-text">01:00:00</span>
-
             </div>
-
         </div>
-
-
 
         <div class="content-main">
-
             <div class="white-sheet">
-
                 
-
                 <div class="sheet-tabs">
-
                     <span id="tab-title">EXAMINATION INSTRUCTIONS</span>
-
                 </div>
-
-
 
                 <div id="instruction-page" class="active">
-
                     <div class="instruction-image-container">
-
                         <img src="https://subsequent-peach-sreytzhxs9.edgeone.dev/instruction.jpg" alt="Instructions">
-
                     </div>
-
                     <div class="footer-controls">
-
-                        <div style="margin-bottom:15px; font-weight: bold; font-size: 16px;">
-
-                            <input type="checkbox" id="agree"> <label for="agree">I have read and understood the instructions strictly.</label>
-
+                        <div style="margin-bottom:10px; font-weight: bold; font-size: 14px;">
+                            <input type="checkbox" id="agree"> <label for="agree">I have read the instructions strictly.</label>
                         </div>
-
                         <button id="start-btn" class="btn-start" disabled onclick="startTest()">START TEST NOW</button>
-
                     </div>
-
                 </div>
-
-
 
                 <div id="question-page">
-
                     <div class="question-box">
-
-                        <p id="q-number" style="font-weight:bold; color:#e74c3c; font-size: 18px;"></p>
-
+                        <p id="q-number" style="font-weight:bold; color:#e74c3c; font-size: 16px;"></p>
                         <h3 id="q-text"></h3>
-
                         <div id="options-container"></div>
-
                     </div>
-
                     <div class="footer-controls">
-
                         <div class="btn-group">
-
-                            <button class="btn-nav" onclick="prevQ()">PREVIOUS</button>
-
+                            <button class="btn-nav" onclick="prevQ()">PREV</button>
                             <button class="btn-nav" onclick="nextQ()" id="next-btn">NEXT</button>
-
-                            <button onclick="submitTest()" id="submit-btn" class="btn-start" style="display:none">SUBMIT EXAMINATION</button>
-
+                            <button onclick="submitTest()" id="submit-btn" class="btn-start" style="display:none">SUBMIT</button>
                         </div>
-
                     </div>
-
                 </div>
 
-
-
-                <div id="score-page" style="padding:60px; text-align:center;">
-
-                    <h2 style="text-decoration: underline;">EXAMINATION RESULT</h2>
-
-                    <p style="margin-top: 20px; font-size: 20px;">Candidate Name: <span id="final-name" style="font-weight: bold;"></span></p>
-
-                    <div id="score-display" style="border-color: #2c3e50; font-size: 35px; margin: 40px auto; width: 160px; height: 160px; line-height: 150px; border: 5px solid #2c3e50; border-radius: 50%; display: inline-block; font-weight: bold;"></div>
-
-                    <p style="font-style: italic; color: #555;">(Verified Performance Summary)</p>
-
-                    <button class="btn-nav" style="margin-top:40px" onclick="location.reload()">CLOSE PORTAL</button>
-
+                <div id="score-page" style="padding:40px 20px; text-align:center; overflow-y: auto;">
+                    <h2 style="text-decoration: underline; font-size: 20px;">EXAMINATION RESULT</h2>
+                    <p style="margin-top: 15px; font-size: 16px;">Name: <span id="final-name" style="font-weight: bold;"></span></p>
+                    <div id="score-display" style="border-color: #2c3e50; font-size: 28px; margin: 25px auto; width: 120px; height: 120px; line-height: 110px; border: 5px solid #2c3e50; border-radius: 50%; display: inline-block; font-weight: bold;"></div>
+                    <p style="font-style: italic; color: #555; font-size: 14px;">(Verified Performance Summary)</p>
+                    <button class="btn-nav" style="margin-top:30px" onclick="location.reload()">CLOSE</button>
                 </div>
-
-
 
             </div>
-
         </div>
-
     </div>
 
-
-
     <script>
-
-        // FULL 40 QUESTIONS DB
-
         const questions = [
-
             { q: "What is the central theme of Wordsworth's 'The Solitary Reaper'?", a: ["Urban life", "Beauty of nature and music", "War and heroism", "City poverty"], c: 1 },
-
             { q: "The poet hears the reaper singing while she is:", a: ["Dancing in a field", "Cutting grain with a sickle", "Reading a book", "Talking to friends"], c: 1 },
-
             { q: "The phrase 'single in the field' suggests the reaper is:", a: ["Married", "Alone", "With family", "In a group"], c: 1 },
-
             { q: "What does the poet compare the reaper's song to?", a: ["A nightingale's song", "A cuckoo's voice", "Both A and B", "A lion's roar"], c: 2 },
-
             { q: "A paraphrase of 'Will no one tell me what she sings?' means:", a: ["Who will explain her song?", "Why is she singing alone?", "Is her song sad?", "Stop her from singing"], c: 0 },
-
             { q: "The poet's interpretation of the song includes themes of:", a: ["Everyday chores", "Old sorrows or battles long ago", "Modern technology", "School lessons"], c: 1 },
-
             { q: "In analysis, the reaper symbolizes:", a: ["Hard labor without joy", "Solitude and natural beauty", "Wealth and fame", "City entertainment"], c: 1 },
-
             { q: "The line 'Breaking the silence of the seas' refers to:", a: ["A storm", "The song's power", "Waves crashing", "A boat sailing"], c: 1 },
-
             { q: "A summary of the poem would state the poet:", a: ["Ignores the girl", "Watches her sing and carries the memory", "Joins her in singing", "Forgets her quickly"], c: 1 },
-
             { q: "The mood of the poem is primarily:", a: ["Angry", "Melancholic and appreciative", "Joyful and loud", "Fearful"], c: 1 },
-
             { q: "What does 'Vale profound' mean in paraphrase?", a: ["Shallow valley", "Deep valley", "High mountain", "Busy road"], c: 1 },
-
             { q: "The poet urges himself to:", a: ["Forget the song", "Stop and listen longer", "Sing louder", "Leave immediately"], c: 1 },
-
             { q: "Interpretation: The song haunts the poet even as he:", a: ["Climbs the hill", "Goes to the city", "Falls asleep", "Eats food"], c: 0 },
-
             { q: "The reaper's song is described as:", a: ["Harsh and loud", "Thrilling and lingering", "Short and simple", "In English"], c: 1 },
-
             { q: "In literary analysis, the poem exemplifies:", a: ["Romanticism", "Realism", "Modernism", "Drama"], c: 0 },
-
             { q: "The title 'La Belle Dame Sans Merci' translates to:", a: ["The Beautiful Lady Without Mercy", "The Cruel Knight", "The Lonely Reaper", "The Old Friend"], c: 0 },
-
             { q: "The knight is described as:", a: ["Healthy and strong", "Haggard and pale", "Rich and happy", "Old and wise"], c: 1 },
-
             { q: "The lady gives the knight:", a: ["A poisonous drink", "Roots, honey, and manna-dew", "Gold coins", "A sword"], c: 1 },
-
             { q: "Where does the lady take the knight?", a: ["To a castle", "Her elfin grot", "A battlefield", "The sea"], c: 1 },
-
             { q: "The knight dreams of:", a: ["Victory in war", "Pale kings, princes, and warriors", "A wedding", "A feast"], c: 1 },
-
             { q: "A summary: A knight meets a fairy lady who:", a: ["Heals him", "Enchants and leaves him alone", "Marries him", "Fights with him"], c: 1 },
-
             { q: "Paraphrase of 'I saw pale kings and princes too':", a: ["Happy rulers", "Ghostly royal figures", "Real kings visiting", "Poor beggars"], c: 1 },
-
             { q: "Analysis: The poem is a ballad about:", a: ["True love", "Fatal attraction and enchantment", "Friendship", "War victory"], c: 1 },
-
             { q: "The knight wakes up on:", a: ["A hill side", "A soft bed", "In a palace", "By the river"], c: 0 },
-
             { q: "Interpretation: The lady represents:", a: ["Pure love", "A destructive supernatural force", "A helpful guide", "Nature's beauty"], c: 1 },
-
             { q: "The poem 'Break, Break, Break' addresses:", a: ["The sea", "A friend", "The sky", "A lover"], c: 0 },
-
             { q: "The speaker laments the loss of:", a: ["His voice", "A tender hand and voice", "His ship", "Money"], c: 1 },
-
             { q: "What remains unchanged by the sea?", a: ["The speaker's heart", "Fisherman's boy and shipman's call", "The waves", "The cliffs"], c: 1 },
-
             { q: "The tone of the poem is:", a: ["Joyful", "Grief-stricken", "Angry", "Hopeful"], c: 1 },
-
             { q: "Paraphrase: 'And I would that my tongue could utter':", a: ["I wish I could speak my thoughts", "My tongue is tired", "Speak louder", "Stop talking"], c: 0 },
-
             { q: "Summary: The speaker watches the sea break on shores while:", a: ["Celebrating life", "Mourning silently", "Fishing", "Swimming"], c: 1 },
-
             { q: "Analysis: The repetition of 'Break, Break, Break' shows:", a: ["Happiness", "Persistent grief", "Rhythm of waves", "Both B and C"], c: 3 },
-
             { q: "Interpretation: The poem expresses:", a: ["Inability to express deep sorrow", "Joy of nature", "Love for sea", "Adventure"], c: 0 },
-
             { q: "The 'noble deeds' refer to:", a: ["The speaker's actions", "Thoughts too deep for words", "Sea activities", "Daily work"], c: 1 },
-
             { q: "The cliffs are described as:", a: ["Mighty and unchanging", "Small and fragile", "Colorful", "Movable"], c: 0 },
-
             { q: "In 'Old China,' Lamb and his sister discuss:", a: ["Modern technology", "Old porcelain plates and past happiness", "Politics", "School days"], c: 1 },
-
             { q: "The essay reflects on:", a: ["Wealth bringing more joy", "Poverty allowing simple pleasures", "Travel adventures", "Food recipes"], c: 1 },
-
             { q: "Lamb prefers the time when they had:", a: ["Lots of money", "Just enough for basics", "No plates", "Fancy clothes"], c: 1 },
-
             { q: "Paraphrase: 'We were richer in those days':", a: ["Had more money", "Felt happier with less", "Bought expensive items", "Lost wealth"], c: 1 },
-
             { q: "Analysis: The essay is nostalgic about:", a: ["Future dreams", "Past modest life", "War times", "City life"], c: 1 }
-
         ];
 
-
-
         let currentQ = 0;
-
         let answers = new Array(questions.length).fill(null);
-
         let userName = "";
-
         let timeLeft = 3600;
 
-
-
         function enterPortal() {
-
             let input = document.getElementById('user-name-input').value;
-
             if(input) {
-
                 userName = input.toUpperCase();
-
                 document.getElementById('login-screen').style.display = 'none';
-
-                document.getElementById('header-name').innerText = "CANDIDATE: " + userName;
-
+                document.getElementById('header-name').innerText = "Candidate: " + userName;
             } else { alert("CANDIDATE NAME REQUIRED!"); }
-
         }
-
-
 
         document.getElementById('agree').onchange = function() {
-
             document.getElementById('start-btn').disabled = !this.checked;
-
         }
-
-
 
         function startTest() {
-
             document.getElementById('instruction-page').style.display = 'none';
-
             document.getElementById('question-page').style.display = 'flex';
-
             document.getElementById('tab-title').innerText = "TEST BOOKLET - SECTION A";
-
             loadQ();
-
             startTimer();
-
         }
-
-
 
         function loadQ() {
-
             const data = questions[currentQ];
-
             document.getElementById('q-number').innerText = `Question ${currentQ + 1} of ${questions.length}`;
-
             document.getElementById('q-text').innerText = (currentQ + 1) + ". " + data.q;
-
             const container = document.getElementById('options-container');
-
             container.innerHTML = "";
-
             data.a.forEach((opt, i) => {
-
                 const div = document.createElement('div');
-
                 div.className = `option-item ${answers[currentQ] === i ? 'selected' : ''}`;
-
                 div.innerText = String.fromCharCode(65 + i) + ") " + opt;
-
                 div.onclick = () => { answers[currentQ] = i; loadQ(); };
-
                 container.appendChild(div);
-
             });
-
             document.getElementById('next-btn').style.display = (currentQ === questions.length-1) ? 'none' : 'inline-block';
-
             document.getElementById('submit-btn').style.display = (currentQ === questions.length-1) ? 'inline-block' : 'none';
-
         }
-
-
 
         function nextQ() { if(currentQ < questions.length-1) { currentQ++; loadQ(); } }
-
         function prevQ() { if(currentQ > 0) { currentQ--; loadQ(); } }
 
-
-
         function submitTest() {
-
             if(confirm("DO YOU WANT TO FINISH THE EXAMINATION?")) {
-
                 document.getElementById('question-page').style.display = 'none';
-
                 document.getElementById('score-page').style.display = 'block';
-
                 document.getElementById('tab-title').innerText = "OFFICIAL SCOREBOARD";
-
                 
-
                 let score = 0;
-
                 answers.forEach((ans, i) => { 
-
                     if(ans !== null && ans === questions[i].c) score++; 
-
                 });
 
-
-
                 document.getElementById('final-name').innerText = userName;
-
                 document.getElementById('score-display').innerText = score + " / " + questions.length;
-
             }
-
         }
-
-
 
         function startTimer() {
-
-            setInterval(() => {
-
+            let timerInterval = setInterval(() => {
                 let m = Math.floor(timeLeft / 60);
-
                 let s = timeLeft % 60;
-
                 document.getElementById('timer-text').innerText = `00:${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-
-                if(timeLeft > 0) timeLeft--; else submitTest();
-
+                if(timeLeft > 0) timeLeft--; 
+                else {
+                    clearInterval(timerInterval);
+                    submitTest();
+                }
             }, 1000);
-
         }
-
     </script>
-
 </body>
-
 </html>
